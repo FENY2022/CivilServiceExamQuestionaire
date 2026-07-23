@@ -7,7 +7,7 @@
     const progressText = document.getElementById('progressText');
     const progressBar = document.getElementById('progressBar');
     const timer = document.getElementById('timer');
-    const mobileTimer = document.getElementById('mobileTimerValue');
+    const mobileTimer = document.getElementById('mobileTimer');
     const submitButton = document.getElementById('submitQuiz');
     const submitBadge = document.getElementById('submitBadge');
     const resultArea = document.getElementById('resultArea');
@@ -105,9 +105,9 @@
         const hours = Math.floor(remaining / 3600);
         const minutes = Math.floor((remaining % 3600) / 60);
         const seconds = remaining % 60;
-        const formattedTime = [hours, minutes, seconds].map(value => String(value).padStart(2, '0')).join(':');
-        timer.textContent = formattedTime;
-        if (mobileTimer) mobileTimer.textContent = formattedTime;
+        const timeText = [hours, minutes, seconds].map(value => String(value).padStart(2, '0')).join(':');
+        timer.textContent = timeText;
+        if (mobileTimer) mobileTimer.textContent = timeText;
     }
 
     function showSubmitModal() {
