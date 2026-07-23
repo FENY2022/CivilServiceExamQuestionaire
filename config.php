@@ -31,7 +31,7 @@ function ensure_storage(): void
 
     foreach ([USERS_FILE, TOKENS_FILE] as $file) {
         if (!file_exists($file)) {
-            file_put_contents($file, json_encode([], JSON_PRETTY_PRINT));
+            file_put_contents($file, json_encode([], JSON_PRETTY_PRINT), 0664);
         }
     }
 }
@@ -47,7 +47,7 @@ function read_json_file(string $file): array
 function write_json_file(string $file, array $data): void
 {
     ensure_storage();
-    file_put_contents($file, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES), LOCK_EX);
+    file_put_contents($file, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES), LOCK_EX | 0664);
 }
 
 function get_users(): array
