@@ -22,39 +22,43 @@ $confirmed = count(array_filter($users, fn($user) => !empty($user['confirmed']))
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Admin Panel - <?= APP_NAME ?></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+    tailwind.config = { theme: { extend: { colors: { brand: { 50: '#eef7ff', 600: '#1479c9', 700: '#0f5ea8', 900: '#123c69', 950: '#102a43' } } } } };
+    </script>
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
-    <header class="topbar">
-        <a class="brand" href="dashboard.php"><span>CSC</span>Admin Panel</a>
-        <nav><a href="dashboard.php">Dashboard</a><a href="logout.php">Logout</a></nav>
+<body class="min-h-screen bg-gradient-to-b from-slate-50 to-blue-50 font-sans text-slate-900">
+    <header class="sticky top-0 z-40 flex min-h-[74px] flex-col gap-3 border-b border-blue-100 bg-white/90 px-4 py-4 shadow-sm backdrop-blur sm:flex-row sm:items-center sm:justify-between sm:px-7">
+        <a class="flex items-center gap-3 font-black text-brand-950" href="dashboard.php"><span class="grid h-11 w-11 place-items-center rounded-xl bg-brand-700 text-white shadow-lg">CSC</span>Admin Panel</a>
+        <nav class="flex gap-4 text-sm font-black text-brand-700"><a class="hover:text-brand-950" href="dashboard.php">Dashboard</a><a class="hover:text-brand-950" href="logout.php">Logout</a></nav>
     </header>
-    <main class="container">
-        <section class="stats-grid">
-            <div class="stat-card"><strong><?= count($users) ?></strong><span>Total Users</span></div>
-            <div class="stat-card"><strong><?= $confirmed ?></strong><span>Confirmed</span></div>
-            <div class="stat-card"><strong><?= count($users) - $confirmed ?></strong><span>Pending</span></div>
+    <main class="mx-auto w-full max-w-6xl px-4 py-8">
+        <section class="grid gap-4 md:grid-cols-3">
+            <div class="rounded-[2rem] border border-blue-100 bg-white p-6 shadow-xl"><strong class="block text-4xl font-black text-brand-700"><?= count($users) ?></strong><span class="font-extrabold text-slate-600">Total Users</span></div>
+            <div class="rounded-[2rem] border border-blue-100 bg-white p-6 shadow-xl"><strong class="block text-4xl font-black text-emerald-600"><?= $confirmed ?></strong><span class="font-extrabold text-slate-600">Confirmed</span></div>
+            <div class="rounded-[2rem] border border-blue-100 bg-white p-6 shadow-xl"><strong class="block text-4xl font-black text-amber-600"><?= count($users) - $confirmed ?></strong><span class="font-extrabold text-slate-600">Pending</span></div>
         </section>
-        <section class="table-card">
-            <h1>Registered Users</h1>
-            <div class="table-wrap">
-                <table>
-                    <thead><tr><th>Name</th><th>Age</th><th>Email</th><th>Status</th><th>Created</th><th>Action</th></tr></thead>
+        <section class="mt-6 rounded-[2rem] border border-blue-100 bg-white p-6 shadow-2xl">
+            <h1 class="text-3xl font-black text-brand-950">Registered Users</h1>
+            <div class="custom-scrollbar mt-5 overflow-x-auto">
+                <table class="w-full border-collapse text-left text-sm">
+                    <thead><tr class="bg-blue-50 text-brand-950"><th class="p-4">Name</th><th class="p-4">Age</th><th class="p-4">Email</th><th class="p-4">Status</th><th class="p-4">Created</th><th class="p-4">Action</th></tr></thead>
                     <tbody>
                     <?php if (!$users): ?>
-                        <tr><td colspan="6">No registered users yet.</td></tr>
+                        <tr><td class="border-b border-slate-100 p-4 text-slate-600" colspan="6">No registered users yet.</td></tr>
                     <?php endif; ?>
                     <?php foreach ($users as $user): ?>
-                        <tr>
-                            <td><?= htmlspecialchars($user['name'] ?? '') ?></td>
-                            <td><?= htmlspecialchars((string)($user['age'] ?? '')) ?></td>
-                            <td><?= htmlspecialchars($user['email'] ?? '') ?></td>
-                            <td><span class="pill <?= !empty($user['confirmed']) ? 'ok' : 'pending' ?>"><?= !empty($user['confirmed']) ? 'Confirmed' : 'Pending' ?></span></td>
-                            <td><?= htmlspecialchars(substr($user['created_at'] ?? '', 0, 10)) ?></td>
-                            <td>
+                        <tr class="hover:bg-slate-50">
+                            <td class="border-b border-slate-100 p-4 font-bold"><?= htmlspecialchars($user['name'] ?? '') ?></td>
+                            <td class="border-b border-slate-100 p-4"><?= htmlspecialchars((string)($user['age'] ?? '')) ?></td>
+                            <td class="border-b border-slate-100 p-4"><?= htmlspecialchars($user['email'] ?? '') ?></td>
+                            <td class="border-b border-slate-100 p-4"><span class="rounded-full px-3 py-1 text-xs font-black <?= !empty($user['confirmed']) ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700' ?>"><?= !empty($user['confirmed']) ? 'Confirmed' : 'Pending' ?></span></td>
+                            <td class="border-b border-slate-100 p-4"><?= htmlspecialchars(substr($user['created_at'] ?? '', 0, 10)) ?></td>
+                            <td class="border-b border-slate-100 p-4">
                                 <form method="post" onsubmit="return confirm('Delete this user?')">
                                     <input type="hidden" name="delete_email" value="<?= htmlspecialchars($user['email'] ?? '') ?>">
-                                    <button class="btn danger small" type="submit">Delete</button>
+                                    <button class="rounded-xl bg-red-600 px-3 py-2 text-xs font-black text-white shadow transition hover:bg-red-700" type="submit">Delete</button>
                                 </form>
                             </td>
                         </tr>
@@ -64,5 +68,6 @@ $confirmed = count(array_filter($users, fn($user) => !empty($user['confirmed']))
             </div>
         </section>
     </main>
+    <script src="js/toast.js"></script>
 </body>
 </html>
