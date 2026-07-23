@@ -201,6 +201,8 @@
     function submitQuiz() {
         if (submitted) return;
         submitted = true;
+        if (window.showButtonLoading) showButtonLoading(submitButton, 'Submitting...');
+        if (window.showPageLoader) showPageLoader('Submitting exam, please wait...');
         let score = 0;
         const categoryScores = {};
 
@@ -244,8 +246,8 @@
         resultArea.scrollIntoView({ behavior: 'smooth' });
         submitButton.disabled = true;
         submitButton.classList.add('opacity-80', 'cursor-not-allowed');
-        submitButton.querySelector('span').textContent = 'Submitted';
-        if (submitBadge) submitBadge.textContent = `${score}/${totalQuestions}`;
+        submitButton.innerHTML = `<span>Submitted</span><span class="ml-2 rounded-full bg-white/20 px-2 py-1 text-xs">${score}/${totalQuestions}</span>`;
+        if (window.hidePageLoader) window.setTimeout(hidePageLoader, 250);
         if (window.showToast) showToast('Exam submitted successfully.', 'success');
     }
 

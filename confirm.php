@@ -43,6 +43,7 @@ if ($token !== '') {
     tailwind.config = { theme: { extend: { colors: { brand: { 50: '#eef7ff', 600: '#1479c9', 700: '#0f5ea8', 900: '#123c69', 950: '#102a43' } } } } };
     </script>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/loader.css">
 </head>
 <body class="grid min-h-screen place-items-center bg-gradient-to-br from-blue-50 via-white to-sky-100 p-4 font-sans text-slate-900">
     <main class="w-full max-w-lg rounded-[2rem] border border-blue-100 bg-white/95 p-8 text-center shadow-2xl sm:p-10">
@@ -51,6 +52,7 @@ if ($token !== '') {
         <p class="mx-auto mt-3 max-w-sm text-slate-600">Your registration request has been processed. Check the notification for the result.</p>
         <a class="mt-7 inline-flex rounded-2xl bg-gradient-to-r from-brand-700 to-brand-600 px-6 py-4 font-black text-white shadow-xl transition hover:-translate-y-0.5" href="<?= $status === 'success' ? 'dashboard.php' : 'index.php' ?>"><?= $status === 'success' ? 'Go to Dashboard' : 'Back to Registration' ?></a>
     </main>
+    <script src="js/loader.js"></script>
     <script src="js/toast.js"></script>
     <script>document.addEventListener('DOMContentLoaded', () => showToast(<?= json_encode($message) ?>, <?= json_encode($status) ?>));</script>
 </body>

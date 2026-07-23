@@ -22,6 +22,7 @@ $exam = get_exam_questions($type);
     tailwind.config = { theme: { extend: { colors: { brand: { 50: '#eef7ff', 600: '#1479c9', 700: '#0f5ea8', 900: '#123c69', 950: '#102a43' } } } } };
     </script>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/loader.css">
 </head>
 <body class="min-h-screen bg-gradient-to-b from-slate-50 to-blue-50 font-sans text-slate-900">
     <header class="sticky top-0 z-40 flex min-h-[74px] flex-col gap-3 border-b border-blue-100 bg-white/90 px-4 py-4 shadow-sm backdrop-blur sm:flex-row sm:items-center sm:justify-between sm:px-7">
@@ -61,6 +62,7 @@ $exam = get_exam_questions($type);
     </button>
     <div id="modalRoot"></div>
     <script>window.EXAM_DATA = <?= json_encode($exam, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>;</script>
+    <script src="js/loader.js"></script>
     <script src="js/toast.js"></script>
     <script src="js/app.js"></script>
 </body>

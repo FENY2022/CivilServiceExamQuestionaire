@@ -64,6 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     tailwind.config = { theme: { extend: { colors: { brand: { 50: '#eef7ff', 600: '#1479c9', 700: '#0f5ea8', 900: '#123c69', 950: '#102a43' } } } } };
     </script>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/loader.css">
 </head>
 <body class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-sky-100 font-sans text-slate-900">
     <main class="mx-auto grid min-h-screen w-full max-w-6xl place-items-center gap-7 px-4 py-8 lg:grid-cols-[1.1fr_.9fr]">
@@ -95,6 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         </section>
     </main>
+    <script src="js/loader.js"></script>
     <script src="js/toast.js"></script>
     <?php if ($message): ?>
     <script>document.addEventListener('DOMContentLoaded', () => showToast(<?= json_encode($message) ?>, <?= json_encode($status) ?>));</script>

@@ -49,6 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     tailwind.config = { theme: { extend: { colors: { brand: { 50: '#eef7ff', 600: '#1479c9', 700: '#0f5ea8', 900: '#123c69', 950: '#102a43' } } } } };
     </script>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/loader.css">
 </head>
 <body class="grid min-h-screen place-items-center bg-gradient-to-br from-blue-50 via-white to-sky-100 p-4 font-sans text-slate-900">
     <main class="w-full max-w-md rounded-[2rem] border border-blue-100 bg-white/95 p-7 shadow-2xl sm:p-9">
@@ -71,6 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </form>
         <div class="mt-6 font-black text-brand-700"><a class="hover:text-brand-950" href="index.php">Create account</a></div>
     </main>
+    <script src="js/loader.js"></script>
     <script src="js/toast.js"></script>
     <script>
     document.querySelectorAll('.tab').forEach(button => button.addEventListener('click', () => {

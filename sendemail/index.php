@@ -7,6 +7,7 @@
         <link rel="icon" type="image/png" href="../favicon.png">
         <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="../css/loader.css">
     </head>
 
 <?php
@@ -39,5 +40,6 @@ $yourname = 'ICTAMSOS';
 
 
 
+    <script src="../js/loader.js"></script>
     </body>
 </html>
