@@ -25,14 +25,10 @@ $exam = get_exam_questions($type);
     <link rel="stylesheet" href="css/loader.css">
 </head>
 <body class="min-h-screen bg-gradient-to-b from-slate-50 to-blue-50 font-sans text-slate-900">
-    <header class="sticky top-0 z-40 flex min-h-[74px] flex-col gap-3 border-b border-blue-100 bg-white/90 px-4 py-4 shadow-sm backdrop-blur sm:flex-row sm:items-center sm:justify-between sm:px-7">
-        <a class="flex items-center gap-3 font-black text-brand-950" href="dashboard.php"><span class="grid h-11 w-11 place-items-center rounded-xl bg-brand-700 text-white shadow-lg">CSC</span><?= ucfirst($type) ?> Reviewer</a>
-        <div class="flex w-fit items-center gap-2 rounded-full border border-blue-100 bg-white/95 px-4 py-2 text-xs font-black text-slate-500 shadow-lg shadow-blue-900/10 lg:hidden">
+    <?php render_top_nav(ucfirst($type) . ' Reviewer', 'dashboard', '<div class="flex w-fit items-center gap-2 rounded-full border border-blue-100 bg-white/95 px-4 py-2 text-xs font-black text-slate-500 shadow-lg shadow-blue-900/10 lg:hidden">
             <span>Time Remaining</span>
             <strong class="text-base text-brand-700" id="mobileTimer">--:--:--</strong>
-        </div>
-        <nav class="flex gap-4 text-sm font-black text-brand-700"><a class="hover:text-brand-950" href="dashboard.php">Dashboard</a><a class="hover:text-brand-950" href="logout.php">Logout</a></nav>
-    </header>
+        </div>'); ?>
     <main class="mx-auto grid w-full max-w-[1440px] gap-5 px-4 py-5 lg:grid-cols-[320px_1fr]">
         <aside class="grid gap-4 self-start lg:sticky lg:top-24">
             <div class="hidden rounded-3xl border border-blue-100 bg-white p-5 shadow-xl lg:block">
