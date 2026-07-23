@@ -28,9 +28,15 @@ $exam = get_exam_questions($type);
         <a class="flex items-center gap-3 font-black text-brand-950" href="dashboard.php"><span class="grid h-11 w-11 place-items-center rounded-xl bg-brand-700 text-white shadow-lg">CSC</span><?= ucfirst($type) ?> Reviewer</a>
         <nav class="flex gap-4 text-sm font-black text-brand-700"><a class="hover:text-brand-950" href="dashboard.php">Dashboard</a><a class="hover:text-brand-950" href="logout.php">Logout</a></nav>
     </header>
-    <main class="mx-auto grid w-full max-w-[1440px] gap-5 px-4 py-5 lg:grid-cols-[320px_1fr]">
+    <div class="fixed left-0 right-0 top-[74px] z-40 border-b border-blue-100 bg-white/95 px-4 py-2 shadow-sm backdrop-blur sm:hidden">
+        <div class="mx-auto flex max-w-[1440px] items-center justify-between">
+            <span class="text-xs font-extrabold text-slate-500">Time Remaining</span>
+            <strong class="rounded-full bg-blue-50 px-3 py-1 text-lg font-black text-brand-700" id="mobileTimerValue">--:--:--</strong>
+        </div>
+    </div>
+    <main class="mx-auto grid w-full max-w-[1440px] gap-5 px-4 py-5 pt-14 lg:grid-cols-[320px_1fr] lg:pt-5">
         <aside class="grid gap-4 self-start lg:sticky lg:top-24">
-            <div class="rounded-3xl border border-blue-100 bg-white p-5 shadow-xl">
+            <div class="hidden rounded-3xl border border-blue-100 bg-white p-5 shadow-xl sm:block">
                 <span class="text-sm font-extrabold text-slate-500">Time Remaining</span>
                 <strong class="mt-1 block text-3xl font-black text-brand-700" id="timer">--:--:--</strong>
             </div>
