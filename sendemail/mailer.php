@@ -39,6 +39,38 @@ function send_confirmation_email(string $email, string $name, string $confirmati
         $mail->send();
         return ['ok' => true, 'message' => 'Confirmation email sent.'];
     } catch (Exception $e) {
-        return ['ok' => false, 'message' => $mail->ErrorInfo ?: $e->getMessage()];
+        $rawError = $mail->ErrorInfo ?: $e->getMessage();
+        return [
+            'ok' => false,
+            'message' => friendly_mail_error($rawError),
+            'raw_error' => $rawError,
+        ];
     }
+}
+
+function friendly_mail_error(string $error): string
+{
+    $normalized = strtolower($error);
+
+    if (str_contains($normalized, 'authenticate') || str_contains($normalized, 'username and password not accepted')) {
+        return 'Gmail login failed. The Gmail app password may have expired or been revoked. Please generate a new app password in your Google Account settings.';
+    }
+
+    if (str_contains($normalized, 'smtp connect') || str_contains($normalized, 'could not connect') || str_contains($normalized, 'could not access smtp host')) {
+        return 'Could not connect to Gmail SMTP server. Please check the internet connection, XAMPP network access, and Gmail SMTP settings.';
+    }
+
+    if (str_contains($normalized, 'invalid address') || str_contains($normalized, 'invalid email')) {
+        return 'The recipient email address is invalid. Please check the email address and try again.';
+    }
+
+    if (str_contains($normalized, 'extension missing') || str_contains($normalized, 'openssl')) {
+        return 'Email encryption support is not available. Please enable the OpenSSL extension in PHP/XAMPP.';
+    }
+
+    if (str_contains($normalized, 'timed out') || str_contains($normalized, 'timeout')) {
+        return 'The email request timed out. Please try again or check the server connection.';
+    }
+
+    return 'Email could not be sent due to a server error. Please try again later.';
 }

@@ -43,10 +43,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $result = send_confirmation_email($email, $name, app_url('confirm.php?token=' . urlencode($token)));
         if ($result['ok']) {
-            $message = 'Registration successful. Please check your Gmail inbox or spam folder to confirm your account.';
+            $message = 'Confirmation email sent to ' . $email . '. Please check your inbox or spam folder to confirm your account.';
             $status = 'success';
         } else {
-            $message = 'Registration saved, but email sending failed: ' . $result['message'];
+            $message = 'Registration saved, but email sending failed for ' . $email . ': ' . $result['message'];
             $status = 'warning';
         }
     }
