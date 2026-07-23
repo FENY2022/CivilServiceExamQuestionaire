@@ -64,14 +64,20 @@ $disabled = count(array_filter($users, fn($user) => $statusOf($user) === 'disabl
 <body class="min-h-screen bg-gradient-to-b from-slate-50 to-blue-50 font-sans text-slate-900">
     <?php render_top_nav('Admin Panel', 'admin'); ?>
     <main class="mx-auto w-full max-w-6xl px-4 py-8">
-        <section class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <div class="rounded-[2rem] border border-blue-100 bg-white p-6 shadow-xl"><strong class="block text-4xl font-black text-brand-700"><?= count($users) ?></strong><span class="font-extrabold text-slate-600">Total Users</span></div>
-            <div class="rounded-[2rem] border border-blue-100 bg-white p-6 shadow-xl"><strong class="block text-4xl font-black text-amber-600"><?= $pending ?></strong><span class="font-extrabold text-slate-600">Pending</span></div>
-            <div class="rounded-[2rem] border border-blue-100 bg-white p-6 shadow-xl"><strong class="block text-4xl font-black text-emerald-600"><?= $confirmed ?></strong><span class="font-extrabold text-slate-600">Active</span></div>
-            <div class="rounded-[2rem] border border-blue-100 bg-white p-6 shadow-xl"><strong class="block text-4xl font-black text-red-600"><?= $disabled ?></strong><span class="font-extrabold text-slate-600">Disabled</span></div>
+        <section class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4" id="statCards">
+            <button class="stat-card text-left rounded-[2rem] border-2 border-brand-600 bg-white p-6 shadow-xl transition hover:-translate-y-0.5" type="button" data-filter="all"><strong class="block text-4xl font-black text-brand-700"><?= count($users) ?></strong><span class="font-extrabold text-slate-600">Total Users</span></button>
+            <button class="stat-card text-left rounded-[2rem] border-2 border-transparent bg-white p-6 shadow-xl transition hover:-translate-y-0.5" type="button" data-filter="pending"><strong class="block text-4xl font-black text-amber-600"><?= $pending ?></strong><span class="font-extrabold text-slate-600">Pending</span></button>
+            <button class="stat-card text-left rounded-[2rem] border-2 border-transparent bg-white p-6 shadow-xl transition hover:-translate-y-0.5" type="button" data-filter="confirmed"><strong class="block text-4xl font-black text-emerald-600"><?= $confirmed ?></strong><span class="font-extrabold text-slate-600">Active</span></button>
+            <button class="stat-card text-left rounded-[2rem] border-2 border-transparent bg-white p-6 shadow-xl transition hover:-translate-y-0.5" type="button" data-filter="disabled"><strong class="block text-4xl font-black text-red-600"><?= $disabled ?></strong><span class="font-extrabold text-slate-600">Disabled</span></button>
         </section>
         <section class="mt-6 rounded-[2rem] border border-blue-100 bg-white p-6 shadow-2xl">
-            <h1 class="text-3xl font-black text-brand-950">Registered Users</h1>
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <h1 class="text-3xl font-black text-brand-950">Registered Users</h1>
+                <div class="relative">
+                    <input class="w-full rounded-2xl border border-slate-300 bg-slate-50 py-3 pl-11 pr-4 font-semibold outline-none transition focus:border-brand-600 focus:ring-4 focus:ring-blue-100 sm:w-72" type="text" id="userSearch" placeholder="Search by name, email, or status...">
+                    <svg class="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"/></svg>
+                </div>
+            </div>
             <div class="custom-scrollbar mt-5 overflow-x-auto">
                 <table class="w-full border-collapse text-left text-sm">
                     <thead><tr class="bg-blue-50 text-brand-950"><th class="p-4">Name</th><th class="p-4">Email</th><th class="p-4">Age</th><th class="p-4">Status</th><th class="p-4">Created</th><th class="p-4">Actions</th></tr></thead>
@@ -89,7 +95,7 @@ $disabled = count(array_filter($users, fn($user) => $statusOf($user) === 'disabl
                             ][$userStatus] ?? 'bg-slate-50 text-slate-700';
                             $statusLabel = ['pending' => 'Pending', 'confirmed' => 'Active', 'disabled' => 'Disabled'][$userStatus] ?? ucfirst($userStatus);
                         ?>
-                        <tr class="hover:bg-slate-50">
+                        <tr class="hover:bg-slate-50" data-status="<?= $userStatus ?>">
                             <td class="border-b border-slate-100 p-4 font-bold"><?= htmlspecialchars($user['name'] ?? '') ?></td>
                             <td class="border-b border-slate-100 p-4"><?= htmlspecialchars($user['email'] ?? 'No email') ?></td>
                             <td class="border-b border-slate-100 p-4"><?= htmlspecialchars((string)($user['age'] ?? '')) ?></td>
@@ -116,5 +122,34 @@ $disabled = count(array_filter($users, fn($user) => $statusOf($user) === 'disabl
     </main>
     <script src="js/loader.js"></script>
     <script src="js/toast.js"></script>
+    <script>
+    let activeFilter = 'all';
+
+    function applyFilters() {
+        const query = document.getElementById('userSearch').value.toLowerCase();
+        document.querySelectorAll('table tbody tr').forEach(function(row) {
+            const status = row.getAttribute('data-status') || '';
+            const text = row.textContent.toLowerCase();
+            const matchFilter = activeFilter === 'all' || status === activeFilter;
+            const matchSearch = query === '' || text.includes(query);
+            row.style.display = (matchFilter && matchSearch) ? '' : 'none';
+        });
+    }
+
+    document.querySelectorAll('.stat-card').forEach(function(card) {
+        card.addEventListener('click', function() {
+            activeFilter = this.getAttribute('data-filter');
+            document.querySelectorAll('.stat-card').forEach(function(c) {
+                c.classList.remove('border-brand-600');
+                c.classList.add('border-transparent');
+            });
+            this.classList.remove('border-transparent');
+            this.classList.add('border-brand-600');
+            applyFilters();
+        });
+    });
+
+    document.getElementById('userSearch')?.addEventListener('input', applyFilters);
+    </script>
 </body>
 </html>
