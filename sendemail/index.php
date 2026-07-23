@@ -4,6 +4,7 @@
     <head>
         <meta charset="utf-8">
         <title>Send Email</title>
+        <link rel="icon" type="image/png" href="../favicon.png">
         <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="css/style.css">
     </head>
