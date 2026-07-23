@@ -45,6 +45,7 @@ function category_definitions(string $type): array
 function get_exam_questions(string $type): array
 {
     $timeLimit = $type === 'professional' ? 190 : 160;
+    $targetTotal = $type === 'professional' ? 170 : 165;
     $categories = [];
     foreach (category_definitions($type) as [$key, $title, $group]) {
         $categories[] = [
@@ -54,6 +55,7 @@ function get_exam_questions(string $type): array
             'questions' => build_twenty_questions($key, $title),
         ];
     }
+    $categories = select_random_categories($categories, $targetTotal);
 
     return [
         'type' => $type,
@@ -62,6 +64,61 @@ function get_exam_questions(string $type): array
         'passingPercent' => 80,
         'categories' => $categories,
     ];
+}
+
+function select_random_categories(array $categories, int $targetTotal): array
+{
+    $totalAvailable = array_sum(array_map(fn($category) => count($category['questions']), $categories));
+    if ($targetTotal >= $totalAvailable) {
+        foreach ($categories as &$category) {
+            shuffle($category['questions']);
+        }
+        unset($category);
+        return $categories;
+    }
+
+    $allocations = [];
+    $remaining = $targetTotal;
+    foreach ($categories as $index => $category) {
+        $available = count($category['questions']);
+        $share = (int)floor(($available / $totalAvailable) * $targetTotal);
+        $share = max(1, min($available, $share));
+        $allocations[$index] = $share;
+        $remaining -= $share;
+    }
+
+    while ($remaining > 0) {
+        foreach ($categories as $index => $category) {
+            if ($remaining <= 0) {
+                break;
+            }
+            if ($allocations[$index] < count($category['questions'])) {
+                $allocations[$index]++;
+                $remaining--;
+            }
+        }
+    }
+
+    while ($remaining < 0) {
+        foreach ($categories as $index => $category) {
+            if ($remaining >= 0) {
+                break;
+            }
+            if ($allocations[$index] > 1) {
+                $allocations[$index]--;
+                $remaining++;
+            }
+        }
+    }
+
+    foreach ($categories as $index => &$category) {
+        shuffle($category['questions']);
+        $category['questions'] = array_slice($category['questions'], 0, $allocations[$index]);
+    }
+    unset($category);
+    shuffle($categories);
+
+    return $categories;
 }
 
 function build_twenty_questions(string $key, string $title): array
