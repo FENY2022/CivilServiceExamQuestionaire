@@ -452,11 +452,23 @@
     function setupActionBar() {
         const actionBar = document.createElement('div');
         actionBar.id = 'quizActionBar';
-        actionBar.className = 'fixed inset-x-3 bottom-3 z-50 flex flex-row-reverse items-center justify-end gap-2 sm:inset-x-auto sm:bottom-4 sm:right-7 sm:gap-3';
+        actionBar.className = 'fixed inset-x-3 bottom-3 z-50 flex flex-row-reverse items-center justify-end gap-2 transition duration-200 sm:inset-x-auto sm:bottom-4 sm:right-7 sm:gap-3';
         document.body.appendChild(actionBar);
 
         submitButton.className = 'block rounded-full bg-gradient-to-r from-brand-950 to-brand-700 px-4 py-3 text-sm font-black text-white shadow-2xl shadow-blue-900/25 transition hover:-translate-y-1 hover:shadow-blue-700/40 sm:px-6 sm:py-4 sm:text-base';
         actionBar.appendChild(submitButton);
+    }
+
+    function updateActionBarVisibility() {
+        const actionBar = document.getElementById('quizActionBar');
+        if (!actionBar) return;
+        const isMobile = window.matchMedia('(max-width: 639px)').matches;
+        const distanceFromBottom = document.documentElement.scrollHeight - (window.scrollY + window.innerHeight);
+        const shouldShow = !isMobile || distanceFromBottom <= 80;
+
+        actionBar.classList.toggle('opacity-0', !shouldShow);
+        actionBar.classList.toggle('translate-y-6', !shouldShow);
+        actionBar.classList.toggle('pointer-events-none', !shouldShow);
     }
 
     function renderRetakeButton() {
@@ -514,6 +526,8 @@
     document.addEventListener('keydown', event => {
         if (event.key === 'Escape' && modalRoot.innerHTML) closeSubmitModal();
     });
+    window.addEventListener('scroll', updateActionBarVisibility, { passive: true });
+    window.addEventListener('resize', updateActionBarVisibility);
 
     setupActionBar();
     submitButton.innerHTML = '<span>Overall Summary</span><span class="ml-1 rounded-full bg-white/20 px-2 py-0.5 text-[11px] sm:ml-2 sm:py-1 sm:text-xs" id="submitBadge">0 sections scored</span>';
@@ -525,6 +539,7 @@
     renderNavigation();
     renderRetakeButton();
     updateProgress();
+    updateActionBarVisibility();
     if (timerEnabled) {
         startTimer();
     } else {
