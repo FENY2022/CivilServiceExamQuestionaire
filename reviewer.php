@@ -31,7 +31,7 @@ $exam['timerEnabled'] = $timerEnabled;
             <span>Time Remaining</span>
             <strong class="text-base text-brand-700" id="mobileTimer">--:--:--</strong>
         </div>'); ?>
-    <main class="mx-auto grid w-full max-w-[1440px] gap-5 px-4 py-5 lg:grid-cols-[320px_1fr]">
+    <main class="mx-auto grid w-full max-w-[1440px] gap-5 px-4 pb-40 pt-5 lg:grid-cols-[320px_1fr]">
         <aside class="grid gap-4 self-start lg:sticky lg:top-24">
             <div class="hidden rounded-3xl border border-blue-100 bg-white p-5 shadow-xl lg:block">
                 <span class="text-sm font-extrabold text-slate-500">Time Remaining</span>
@@ -54,7 +54,7 @@ $exam['timerEnabled'] = $timerEnabled;
             <div id="resultArea" class="hidden rounded-3xl border border-blue-100 bg-white p-7 shadow-xl"></div>
         </section>
     </main>
-    <button class="fixed bottom-5 right-5 z-50 rounded-full bg-gradient-to-r from-brand-950 to-brand-700 px-6 py-4 font-black text-white shadow-2xl shadow-blue-900/25 transition hover:-translate-y-1 hover:shadow-blue-700/40 sm:bottom-7 sm:right-7" id="submitQuiz" type="button">
+    <button class="hidden" id="submitQuiz" type="button">
         <span>Submit Exam</span>
         <span class="ml-2 rounded-full bg-white/20 px-2 py-1 text-xs" id="submitBadge">0 unanswered</span>
     </button>
@@ -62,6 +62,6 @@ $exam['timerEnabled'] = $timerEnabled;
     <script>window.EXAM_DATA = <?= json_encode($exam, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>;</script>
     <script src="js/loader.js"></script>
     <script src="js/toast.js"></script>
-    <script src="js/app.js"></script>
+    <script src="js/app.js?v=<?= filemtime(__DIR__ . '/js/app.js') ?>"></script>
 </body>
 </html>

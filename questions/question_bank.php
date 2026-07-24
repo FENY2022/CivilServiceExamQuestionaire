@@ -125,8 +125,8 @@ function build_twenty_questions(string $key, string $title): array
 {
     $bank = base_question_bank($key);
     $questions = [];
-    for ($i = 0; $i < 20; $i++) {
-        $item = $bank[$i % count($bank)];
+    foreach ($bank as $i => $bankItem) {
+        $item = $bankItem;
         $item['id'] = $key . '_' . ($i + 1);
         $item['category'] = $title;
         $questions[] = $item;
