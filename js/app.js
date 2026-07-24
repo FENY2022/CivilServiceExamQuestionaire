@@ -14,6 +14,7 @@
     const modalRoot = document.getElementById('modalRoot');
     const answers = new Map();
     const totalQuestions = exam.categories.reduce((sum, category) => sum + category.questions.length, 0);
+    const timerEnabled = exam.timerEnabled !== false;
     let remaining = exam.timeLimitMinutes * 60;
     let submitted = false;
 
@@ -108,6 +109,11 @@
         const timeText = [hours, minutes, seconds].map(value => String(value).padStart(2, '0')).join(':');
         timer.textContent = timeText;
         if (mobileTimer) mobileTimer.textContent = timeText;
+    }
+
+    function showNoTimerLimit() {
+        if (timer) timer.textContent = 'No limit';
+        if (mobileTimer) mobileTimer.textContent = 'No limit';
     }
 
     function showSubmitModal() {
@@ -269,5 +275,9 @@
     renderNavigation();
     renderQuiz();
     updateProgress();
-    startTimer();
+    if (timerEnabled) {
+        startTimer();
+    } else {
+        showNoTimerLimit();
+    }
 })();

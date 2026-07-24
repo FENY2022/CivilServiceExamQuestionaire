@@ -7,8 +7,10 @@ $type = strtolower($_GET['type'] ?? 'professional');
 if (!in_array($type, ['professional', 'subprofessional'], true)) {
     $type = 'professional';
 }
+$timerEnabled = ($_GET['timer'] ?? '1') !== '0';
 
 $exam = get_exam_questions($type);
+$exam['timerEnabled'] = $timerEnabled;
 ?>
 <!doctype html>
 <html lang="en">
