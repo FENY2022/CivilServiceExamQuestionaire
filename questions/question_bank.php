@@ -129,9 +129,34 @@ function build_twenty_questions(string $key, string $title): array
         $item = $bankItem;
         $item['id'] = $key . '_' . ($i + 1);
         $item['category'] = $title;
+        $item = shuffle_question_choices($item);
         $questions[] = $item;
     }
     return $questions;
+}
+
+function shuffle_question_choices(array $item): array
+{
+    $choices = [];
+    foreach ($item['choices'] as $index => $choice) {
+        $choices[] = [
+            'choice' => $choice,
+            'originalIndex' => $index,
+            'sortKey' => sprintf('%u', crc32($item['id'] . ':' . $index)),
+        ];
+    }
+
+    usort($choices, fn($a, $b) => $a['sortKey'] <=> $b['sortKey']);
+
+    $item['choices'] = array_column($choices, 'choice');
+    foreach ($choices as $newIndex => $choice) {
+        if ($choice['originalIndex'] === $item['answer']) {
+            $item['answer'] = $newIndex;
+            break;
+        }
+    }
+
+    return $item;
 }
 
 function q(string $question, array $choices, int $answer, string $explanation): array

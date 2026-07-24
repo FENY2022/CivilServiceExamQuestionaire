@@ -15,7 +15,7 @@
     const sectionResults = new Map();
     const totalQuestions = exam.categories.reduce((sum, category) => sum + category.questions.length, 0);
     const timerEnabled = exam.timerEnabled !== false;
-    const storageKey = `civilServiceReviewer:${exam.type}:progress`;
+    const storageKey = `civilServiceReviewer:${exam.type}:progress:v2`;
     let activeCategoryKey = exam.categories[0]?.key || '';
     let remaining = exam.timeLimitMinutes * 60;
     let submitted = false;
@@ -363,13 +363,18 @@
         const resultBox = document.querySelector(`[data-result="${category.key}"]`);
         if (!resultBox) return;
         const passed = result.percent >= exam.passingPercent;
+        const nextCategory = getNextCategory(category.key);
         resultBox.classList.remove('hidden');
         resultBox.innerHTML = `
             <p class="text-xs font-extrabold uppercase tracking-[.18em] ${passed ? 'text-emerald-700' : 'text-amber-700'}">Section Score</p>
             <h3 class="mt-2 text-3xl font-black text-brand-950">${escapeHtml(category.title)}: ${result.score}/${result.total}</h3>
             <p class="mt-2 text-5xl font-black ${passed ? 'text-emerald-700' : 'text-amber-700'}">${result.percent}%</p>
             <p class="mt-3 font-semibold text-slate-600">${passed ? 'Good section performance.' : 'Review this section again.'} Answers are now locked for this section.</p>
+            ${nextCategory ? `<button type="button" class="next-section mt-5 rounded-2xl bg-gradient-to-r from-brand-950 to-brand-700 px-5 py-3 font-black text-white shadow-xl transition hover:-translate-y-0.5" data-next-category="${nextCategory.key}">Next: ${escapeHtml(nextCategory.title)}</button>` : `<p class="mt-5 rounded-2xl bg-blue-50 p-4 font-bold text-brand-700">This is the last section. You can open the overall summary when ready.</p>`}
         `;
+        resultBox.querySelector('.next-section')?.addEventListener('click', event => {
+            activateCategory(event.currentTarget.dataset.nextCategory);
+        });
         if (scrollToResult) resultBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
@@ -388,6 +393,11 @@
 
     function getCategory(categoryKey) {
         return exam.categories.find(category => category.key === categoryKey);
+    }
+
+    function getNextCategory(categoryKey) {
+        const index = exam.categories.findIndex(category => category.key === categoryKey);
+        return index >= 0 ? exam.categories[index + 1] : null;
     }
 
     function saveProgress() {
