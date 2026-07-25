@@ -208,5 +208,10 @@ class App extends BaseConfig
         parent::__construct();
         $this->adminUsername = $_ENV['ADMIN_USERNAME'] ?? $this->adminUsername;
         $this->adminPassword = $_ENV['ADMIN_PASSWORD'] ?? $this->adminPassword;
+
+        if (! empty($_SERVER['HTTP_HOST'])) {
+            $scheme = (! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+            $this->baseURL = $scheme . '://' . $_SERVER['HTTP_HOST'] . '/';
+        }
     }
 }
