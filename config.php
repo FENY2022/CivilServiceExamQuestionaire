@@ -3,18 +3,17 @@ declare(strict_types=1);
 
 session_start();
 
-define('APP_NAME', 'Philippines Civil Service Exam Reviewer');
-define('APP_EMAIL', 'venzonanthonie@gmail.com');
-define('APP_EMAIL_PASSWORD', 'irsw yeav xgqy rmll');
-define('APP_EMAIL_FROM_NAME', 'Civil Service Reviewer');
-define('ADMIN_USERNAME', 'feny');
-define('ADMIN_PASSWORD', 'feny9959');
-
 define('ROOT_PATH', __DIR__);
-define('DATA_PATH', ROOT_PATH . DIRECTORY_SEPARATOR . 'data');
-define('USERS_FILE', DATA_PATH . DIRECTORY_SEPARATOR . 'users.json');
-define('SETTINGS_FILE', DATA_PATH . DIRECTORY_SEPARATOR . 'settings.json');
-define('GUEST_LOGS_FILE', DATA_PATH . DIRECTORY_SEPARATOR . 'guest_logs.json');
+define('DATA_PATH', ROOT_PATH . DIRECTORY_SEPARATOR . 'writable' . DIRECTORY_SEPARATOR . 'data');
+
+require_once ROOT_PATH . '/db.php';
+
+define('APP_NAME', 'Philippines Civil Service Exam Reviewer');
+define('APP_EMAIL', $_ENV['APP_EMAIL'] ?? 'venzonanthonie@gmail.com');
+define('APP_EMAIL_PASSWORD', $_ENV['APP_EMAIL_PASSWORD'] ?? 'irsw yeav xgqy rmll');
+define('APP_EMAIL_FROM_NAME', 'Civil Service Reviewer');
+define('ADMIN_USERNAME', $_ENV['ADMIN_USERNAME'] ?? 'feny');
+define('ADMIN_PASSWORD', $_ENV['ADMIN_PASSWORD'] ?? 'feny9959');
 
 function app_url(string $path = ''): string
 {
@@ -24,80 +23,75 @@ function app_url(string $path = ''): string
     return $scheme . '://' . $host . ($base === '' ? '' : $base) . '/' . ltrim($path, '/');
 }
 
-function ensure_storage(): void
-{
-    if (!is_dir(DATA_PATH)) {
-        mkdir(DATA_PATH, 0775, true);
-    }
-
-    $defaultFiles = [
-        USERS_FILE => [],
-        SETTINGS_FILE => ['guest_mode' => false],
-        GUEST_LOGS_FILE => [],
-    ];
-
-    foreach ($defaultFiles as $file => $defaultData) {
-        if (!file_exists($file)) {
-            file_put_contents($file, json_encode($defaultData, JSON_PRETTY_PRINT));
-            chmod($file, 0664);
-        }
-    }
-}
-
-function read_json_file(string $file): array
-{
-    ensure_storage();
-    $content = file_get_contents($file);
-    $data = json_decode($content ?: '[]', true);
-    return is_array($data) ? $data : [];
-}
-
-function write_json_file(string $file, array $data): void
-{
-    ensure_storage();
-    file_put_contents($file, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES), LOCK_EX);
-    chmod($file, 0664);
-}
-
 function get_users(): array
 {
-    return read_json_file(USERS_FILE);
+    $pdo = DB::connect();
+    $rows = $pdo->query('SELECT * FROM users ORDER BY created_at DESC')->fetchAll();
+    return array_map(function ($row) {
+        $row['age'] = (int) $row['age'];
+        return $row;
+    }, $rows);
 }
 
 function save_users(array $users): void
 {
-    write_json_file(USERS_FILE, array_values($users));
+    $pdo = DB::connect();
+    $pdo->exec('DELETE FROM users');
+    $stmt = $pdo->prepare('INSERT INTO users (id, name, email, age, status, created_at, confirmed_at, disabled_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
+    foreach ($users as $user) {
+        $stmt->execute([
+            $user['id'] ?? '',
+            $user['name'] ?? '',
+            $user['email'] ?? '',
+            (int) ($user['age'] ?? 0),
+            $user['status'] ?? 'pending',
+            $user['created_at'] ?? '',
+            $user['confirmed_at'] ?? null,
+            $user['disabled_at'] ?? null,
+        ]);
+    }
 }
 
 function get_settings(): array
 {
-    return array_merge(['guest_mode' => false], read_json_file(SETTINGS_FILE));
+    $pdo = DB::connect();
+    $rows = $pdo->query('SELECT key, value FROM settings')->fetchAll();
+    $settings = [];
+    foreach ($rows as $row) {
+        $settings[$row['key']] = $row['value'];
+    }
+    return array_merge(['guest_mode' => false], $settings);
 }
 
 function save_settings(array $settings): void
 {
-    write_json_file(SETTINGS_FILE, array_merge(get_settings(), $settings));
+    $current = get_settings();
+    $merged = array_merge($current, $settings);
+    $pdo = DB::connect();
+    $pdo->exec('DELETE FROM settings');
+    $stmt = $pdo->prepare('INSERT INTO settings (key, value) VALUES (?, ?)');
+    foreach ($merged as $key => $value) {
+        $stmt->execute([$key, is_bool($value) ? ($value ? '1' : '0') : (string) $value]);
+    }
 }
 
 function is_guest_mode(): bool
 {
-    return (bool)(get_settings()['guest_mode'] ?? false);
+    $val = get_settings()['guest_mode'] ?? false;
+    return $val === true || $val === '1' || $val === 1;
 }
 
 function get_guest_logs(): array
 {
-    return read_json_file(GUEST_LOGS_FILE);
+    $pdo = DB::connect();
+    return $pdo->query('SELECT * FROM guest_logs ORDER BY accessed_at DESC')->fetchAll();
 }
 
 function log_guest_access(string $nickname): void
 {
-    $logs = get_guest_logs();
-    $logs[] = [
-        'id' => bin2hex(random_bytes(8)),
-        'nickname' => $nickname,
-        'accessed_at' => date('c'),
-    ];
-    write_json_file(GUEST_LOGS_FILE, $logs);
+    $pdo = DB::connect();
+    $stmt = $pdo->prepare('INSERT INTO guest_logs (id, nickname, accessed_at) VALUES (?, ?, ?)');
+    $stmt->execute([bin2hex(random_bytes(8)), $nickname, date('c')]);
 }
 
 function find_user_by_name(string $name): ?array
@@ -210,5 +204,3 @@ function current_user_name(): string
     }
     return $_SESSION['user']['name'] ?? 'Reviewer';
 }
-
-ensure_storage();

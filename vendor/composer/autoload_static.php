@@ -6,6 +6,10 @@ namespace Composer\Autoload;
 
 class ComposerStaticInit0cc3f5d22019b6e58d55feb75e5f26d1
 {
+    public static $files = array (
+        '45eb10f0a22815cb1debe5250716dcb5' => __DIR__ . '/../..' . '/db.php',
+    );
+
     public static $prefixLengthsPsr4 = array (
         'P' =>
         array (
@@ -50,7 +54,19 @@ class ComposerStaticInit0cc3f5d22019b6e58d55feb75e5f26d1
     );
 
     public static $classMap = array (
+        'App\\Controllers\\Admin\\DashboardController' => __DIR__ . '/../..' . '/app/Controllers/Admin/DashboardController.php',
+        'App\\Controllers\\AuthController' => __DIR__ . '/../..' . '/app/Controllers/AuthController.php',
         'App\\Controllers\\BaseController' => __DIR__ . '/../..' . '/app/Controllers/BaseController.php',
+        'App\\Controllers\\DashboardController' => __DIR__ . '/../..' . '/app/Controllers/DashboardController.php',
+        'App\\Controllers\\HomeController' => __DIR__ . '/../..' . '/app/Controllers/HomeController.php',
+        'App\\Controllers\\QuizController' => __DIR__ . '/../..' . '/app/Controllers/QuizController.php',
+        'App\\Controllers\\ReviewerController' => __DIR__ . '/../..' . '/app/Controllers/ReviewerController.php',
+        'App\\Libraries\\Auth' => __DIR__ . '/../..' . '/app/Libraries/Auth.php',
+        'App\\Libraries\\QuestionBank' => __DIR__ . '/../..' . '/app/Libraries/QuestionBank.php',
+        'App\\Models\\GuestLogModel' => __DIR__ . '/../..' . '/app/Models/GuestLogModel.php',
+        'App\\Models\\JsonFileModel' => __DIR__ . '/../..' . '/app/Models/JsonFileModel.php',
+        'App\\Models\\SettingsModel' => __DIR__ . '/../..' . '/app/Models/SettingsModel.php',
+        'App\\Models\\UserModel' => __DIR__ . '/../..' . '/app/Models/UserModel.php',
         'CodeIgniter\\API\\ApiException' => __DIR__ . '/..' . '/codeigniter4/framework/system/API/ApiException.php',
         'CodeIgniter\\API\\BaseTransformer' => __DIR__ . '/..' . '/codeigniter4/framework/system/API/BaseTransformer.php',
         'CodeIgniter\\API\\ResponseTrait' => __DIR__ . '/..' . '/codeigniter4/framework/system/API/ResponseTrait.php',
@@ -476,8 +492,42 @@ class ComposerStaticInit0cc3f5d22019b6e58d55feb75e5f26d1
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'Config\\App' => __DIR__ . '/../..' . '/app/Config/App.php',
         'Config\\Autoload' => __DIR__ . '/../..' . '/app/Config/Autoload.php',
+        'Config\\CURLRequest' => __DIR__ . '/../..' . '/app/Config/CURLRequest.php',
+        'Config\\Cache' => __DIR__ . '/../..' . '/app/Config/Cache.php',
+        'Config\\ContentSecurityPolicy' => __DIR__ . '/../..' . '/app/Config/ContentSecurityPolicy.php',
+        'Config\\Cookie' => __DIR__ . '/../..' . '/app/Config/Cookie.php',
+        'Config\\Cors' => __DIR__ . '/../..' . '/app/Config/Cors.php',
+        'Config\\Database' => __DIR__ . '/../..' . '/app/Config/Database.php',
+        'Config\\DocTypes' => __DIR__ . '/../..' . '/app/Config/DocTypes.php',
+        'Config\\Email' => __DIR__ . '/../..' . '/app/Config/Email.php',
+        'Config\\Encryption' => __DIR__ . '/../..' . '/app/Config/Encryption.php',
+        'Config\\Exceptions' => __DIR__ . '/../..' . '/app/Config/Exceptions.php',
+        'Config\\Feature' => __DIR__ . '/../..' . '/app/Config/Feature.php',
+        'Config\\Filters' => __DIR__ . '/../..' . '/app/Config/Filters.php',
+        'Config\\ForeignCharacters' => __DIR__ . '/../..' . '/app/Config/ForeignCharacters.php',
+        'Config\\Format' => __DIR__ . '/../..' . '/app/Config/Format.php',
+        'Config\\Generators' => __DIR__ . '/../..' . '/app/Config/Generators.php',
+        'Config\\Honeypot' => __DIR__ . '/../..' . '/app/Config/Honeypot.php',
+        'Config\\Hostnames' => __DIR__ . '/../..' . '/app/Config/Hostnames.php',
+        'Config\\Images' => __DIR__ . '/../..' . '/app/Config/Images.php',
+        'Config\\Kint' => __DIR__ . '/../..' . '/app/Config/Kint.php',
+        'Config\\Logger' => __DIR__ . '/../..' . '/app/Config/Logger.php',
+        'Config\\Migrations' => __DIR__ . '/../..' . '/app/Config/Migrations.php',
+        'Config\\Mimes' => __DIR__ . '/../..' . '/app/Config/Mimes.php',
+        'Config\\Modules' => __DIR__ . '/../..' . '/app/Config/Modules.php',
+        'Config\\Optimize' => __DIR__ . '/../..' . '/app/Config/Optimize.php',
+        'Config\\Pager' => __DIR__ . '/../..' . '/app/Config/Pager.php',
         'Config\\Paths' => __DIR__ . '/../..' . '/app/Config/Paths.php',
+        'Config\\Publisher' => __DIR__ . '/../..' . '/app/Config/Publisher.php',
+        'Config\\Routing' => __DIR__ . '/../..' . '/app/Config/Routing.php',
+        'Config\\Security' => __DIR__ . '/../..' . '/app/Config/Security.php',
         'Config\\Services' => __DIR__ . '/../..' . '/app/Config/Services.php',
+        'Config\\Session' => __DIR__ . '/../..' . '/app/Config/Session.php',
+        'Config\\Toolbar' => __DIR__ . '/../..' . '/app/Config/Toolbar.php',
+        'Config\\UserAgents' => __DIR__ . '/../..' . '/app/Config/UserAgents.php',
+        'Config\\Validation' => __DIR__ . '/../..' . '/app/Config/Validation.php',
+        'Config\\View' => __DIR__ . '/../..' . '/app/Config/View.php',
+        'Config\\WorkerMode' => __DIR__ . '/../..' . '/app/Config/WorkerMode.php',
         'Laminas\\Escaper\\Escaper' => __DIR__ . '/..' . '/laminas/laminas-escaper/src/Escaper.php',
         'Laminas\\Escaper\\EscaperInterface' => __DIR__ . '/..' . '/laminas/laminas-escaper/src/EscaperInterface.php',
         'Laminas\\Escaper\\Exception\\ExceptionInterface' => __DIR__ . '/..' . '/laminas/laminas-escaper/src/Exception/ExceptionInterface.php',

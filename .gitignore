@@ -1,0 +1,10 @@
+/vendor/
+/writable/data/*.db
+/writable/data/*.db-wal
+/writable/data/*.db-shm
+/writable/debugbar/
+/writable/logs/
+/writable/session/
+/writable/cache/
+/writable/uploads/
+.env
