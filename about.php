@@ -38,7 +38,7 @@ require_once __DIR__ . '/config.php';
             </div>
             <div class="mt-7 rounded-2xl border border-blue-100 bg-blue-50 p-5">
                 <p class="text-xs font-extrabold uppercase tracking-[.18em] text-brand-600">Programmed by</p>
-                <p class="mt-1 text-xl font-black text-brand-950">ANTHONIE FENY V. CATALAN</p>
+                <p class="mt-1 text-xl font-black text-brand-950">AF Catalan</p>
                 <p class="text-sm font-semibold text-slate-500">IS Programmer</p>
             </div>
         </section>

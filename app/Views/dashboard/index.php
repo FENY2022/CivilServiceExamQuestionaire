@@ -121,7 +121,7 @@
         <p class="mt-3 text-base leading-7 text-slate-600 sm:text-lg sm:leading-8">This online reviewer system is designed to help aspiring civil servants prepare for the Career Service Examination through randomized practice quizzes, timed exams, and performance tracking.</p>
         <div class="mt-5 rounded-2xl border border-blue-100 bg-blue-50 p-4 sm:p-5">
             <p class="text-xs font-extrabold uppercase tracking-[.18em] text-brand-600">Programmed by</p>
-            <p class="mt-1 text-lg font-black text-brand-950 sm:text-xl">ANTHONIE FENY V. CATALAN</p>
+            <p class="mt-1 text-lg font-black text-brand-950 sm:text-xl">AF Catalan</p>
             <p class="text-sm font-semibold text-slate-500">IS Programmer</p>
         </div>
     </section>
