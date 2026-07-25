@@ -221,10 +221,9 @@ $isGuest = !empty($_SESSION['guest']);
     <?php if ($isGuest): ?>
     <div class="fixed inset-0 z-50 grid place-items-center bg-slate-950/70 px-4 backdrop-blur-sm" id="guestNoticeModal">
         <div class="w-full max-w-lg rounded-[2rem] border border-blue-100 bg-white p-7 shadow-2xl sm:p-9">
-            <p class="text-xs font-extrabold uppercase tracking-[.18em] text-brand-600">Notice / Pahibalo</p>
+            <p class="text-xs font-extrabold uppercase tracking-[.18em] text-brand-600">Notice</p>
             <h2 class="mt-3 text-3xl font-black text-brand-950">Guest Reviewer Access</h2>
-            <div class="mt-5 grid gap-4 text-base font-semibold leading-7 text-slate-700">
-                <p>Kini nga reviewer kay para lang sa review purposes ug libre ra. Walay personal nga impormasyon nga kolektahon gikan sa mga users.</p>
+            <div class="mt-5 text-base font-semibold leading-7 text-slate-700">
                 <p>This reviewer is for review purposes only and is completely free. No personal information is collected from users.</p>
             </div>
             <button class="mt-7 w-full rounded-2xl bg-gradient-to-r from-brand-700 to-brand-600 px-5 py-4 font-black text-white shadow-xl transition hover:-translate-y-0.5" id="guestNoticeClose" type="button">I understand</button>
