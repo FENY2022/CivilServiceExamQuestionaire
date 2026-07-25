@@ -17,7 +17,8 @@ define('ADMIN_PASSWORD', $_ENV['ADMIN_PASSWORD'] ?? 'feny9959');
 
 function app_url(string $path = ''): string
 {
-    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $forwardedProto = $_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '';
+    $scheme = $forwardedProto === 'https' || (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
     $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
     $base = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '')), '/');
     return $scheme . '://' . $host . ($base === '' ? '' : $base) . '/' . ltrim($path, '/');

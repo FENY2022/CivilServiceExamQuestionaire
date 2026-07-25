@@ -210,7 +210,8 @@ class App extends BaseConfig
         $this->adminPassword = $_ENV['ADMIN_PASSWORD'] ?? $this->adminPassword;
 
         if (! empty($_SERVER['HTTP_HOST'])) {
-            $scheme = (! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+            $forwardedProto = $_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '';
+            $scheme = $forwardedProto === 'https' || (! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
             $this->baseURL = $scheme . '://' . $_SERVER['HTTP_HOST'] . '/';
         }
     }
