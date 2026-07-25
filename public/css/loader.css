@@ -1,0 +1,81 @@
+.page-loader {
+    align-items: center;
+    background: rgba(248, 250, 252, .92);
+    backdrop-filter: blur(10px);
+    display: flex;
+    inset: 0;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    position: fixed;
+    transition: opacity .18s ease;
+    z-index: 10000;
+}
+
+.page-loader.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.page-loader__card {
+    align-items: center;
+    background: #fff;
+    border: 1px solid #dbeafe;
+    border-radius: 28px;
+    box-shadow: 0 24px 70px rgba(15, 23, 42, .18);
+    display: grid;
+    gap: 14px;
+    justify-items: center;
+    padding: 28px 32px;
+}
+
+.page-loader__spinner,
+.button-loader__spinner {
+    animation: loader-spin .8s linear infinite;
+    border-radius: 999px;
+    display: inline-block;
+}
+
+.page-loader__spinner {
+    border: 5px solid #dbeafe;
+    border-top-color: #0f5ea8;
+    height: 58px;
+    position: relative;
+    width: 58px;
+}
+
+.page-loader__spinner::after {
+    color: #123c69;
+    content: "CSC";
+    font-size: 11px;
+    font-weight: 900;
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.page-loader__text {
+    color: #123c69;
+    font-size: 14px;
+    font-weight: 900;
+}
+
+.button-loader__spinner {
+    border: 2px solid rgba(255, 255, 255, .42);
+    border-top-color: currentColor;
+    height: 18px;
+    margin-right: 8px;
+    vertical-align: -3px;
+    width: 18px;
+}
+
+.is-button-loading {
+    cursor: wait !important;
+    opacity: .86;
+    pointer-events: none;
+}
+
+@keyframes loader-spin {
+    to { transform: rotate(360deg); }
+}
