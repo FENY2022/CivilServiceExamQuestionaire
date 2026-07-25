@@ -7,6 +7,12 @@ if (empty($_SESSION['admin'])) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
+    if ($action === 'toggle_guest_mode') {
+        save_settings(['guest_mode' => !is_guest_mode()]);
+        header('Location: admin.php');
+        exit;
+    }
+
     $userId = $_POST['user_id'] ?? '';
     $users = get_users();
 
@@ -40,6 +46,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $users = get_users();
+$guestMode = is_guest_mode();
+$guestLogs = array_reverse(get_guest_logs());
 $statusOf = function (array $user): string {
     return $user['status'] ?? (!empty($user['confirmed']) ? 'confirmed' : 'pending');
 };
@@ -64,11 +72,31 @@ $disabled = count(array_filter($users, fn($user) => $statusOf($user) === 'disabl
 <body class="min-h-screen bg-gradient-to-b from-slate-50 to-blue-50 font-sans text-slate-900">
     <?php render_top_nav('Admin Panel', 'admin'); ?>
     <main class="mx-auto w-full max-w-6xl px-4 py-8">
-        <section class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4" id="statCards">
+        <section class="mb-6 rounded-[2rem] border border-blue-100 bg-white p-6 shadow-2xl">
+            <div class="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <p class="text-xs font-extrabold uppercase tracking-[.18em] text-brand-600">Guest Access Control</p>
+                    <h1 class="mt-2 text-3xl font-black text-brand-950">Guest Mode</h1>
+                    <p class="mt-2 font-semibold text-slate-600"><?= $guestMode ? 'Guest access is enabled. Visitors can enter with a nickname only.' : 'Guest access is disabled. Visitors must use an approved account.' ?></p>
+                </div>
+                <form method="post" class="shrink-0">
+                    <input type="hidden" name="action" value="toggle_guest_mode">
+                    <button class="flex w-full items-center justify-between gap-4 rounded-2xl border <?= $guestMode ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : 'border-red-200 bg-red-50 text-red-700' ?> px-5 py-4 font-black shadow-lg transition hover:-translate-y-0.5 sm:w-64" type="submit">
+                        <span><?= $guestMode ? 'Guest Mode ON' : 'Guest Mode OFF' ?></span>
+                        <span class="relative inline-flex h-8 w-14 rounded-full <?= $guestMode ? 'bg-emerald-600' : 'bg-red-500' ?> transition">
+                            <span class="absolute top-1 h-6 w-6 rounded-full bg-white shadow transition <?= $guestMode ? 'left-7' : 'left-1' ?>"></span>
+                        </span>
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <section class="grid gap-4 sm:grid-cols-2 lg:grid-cols-5" id="statCards">
             <button class="stat-card text-left rounded-[2rem] border-2 border-brand-600 bg-white p-6 shadow-xl transition hover:-translate-y-0.5" type="button" data-filter="all"><strong class="block text-4xl font-black text-brand-700"><?= count($users) ?></strong><span class="font-extrabold text-slate-600">Total Users</span></button>
             <button class="stat-card text-left rounded-[2rem] border-2 border-transparent bg-white p-6 shadow-xl transition hover:-translate-y-0.5" type="button" data-filter="pending"><strong class="block text-4xl font-black text-amber-600"><?= $pending ?></strong><span class="font-extrabold text-slate-600">Pending</span></button>
             <button class="stat-card text-left rounded-[2rem] border-2 border-transparent bg-white p-6 shadow-xl transition hover:-translate-y-0.5" type="button" data-filter="confirmed"><strong class="block text-4xl font-black text-emerald-600"><?= $confirmed ?></strong><span class="font-extrabold text-slate-600">Active</span></button>
             <button class="stat-card text-left rounded-[2rem] border-2 border-transparent bg-white p-6 shadow-xl transition hover:-translate-y-0.5" type="button" data-filter="disabled"><strong class="block text-4xl font-black text-red-600"><?= $disabled ?></strong><span class="font-extrabold text-slate-600">Disabled</span></button>
+            <div class="rounded-[2rem] border-2 border-transparent bg-white p-6 shadow-xl"><strong class="block text-4xl font-black text-violet-600"><?= count($guestLogs) ?></strong><span class="font-extrabold text-slate-600">Guest Access</span></div>
         </section>
         <section class="mt-6 rounded-[2rem] border border-blue-100 bg-white p-6 shadow-2xl">
             <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -113,6 +141,32 @@ $disabled = count(array_filter($users, fn($user) => $statusOf($user) === 'disabl
                                     <form method="post" onsubmit="return confirm('Delete this user?')"><input type="hidden" name="action" value="delete"><input type="hidden" name="user_id" value="<?= htmlspecialchars($user['id'] ?? '') ?>"><button class="rounded-xl bg-red-600 px-3 py-2 text-xs font-black text-white shadow transition hover:bg-red-700" type="submit">Delete</button></form>
                                 </div>
                             </td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="mt-6 rounded-[2rem] border border-blue-100 bg-white p-6 shadow-2xl">
+            <div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                    <p class="text-xs font-extrabold uppercase tracking-[.18em] text-brand-600">Access Logs</p>
+                    <h1 class="mt-2 text-3xl font-black text-brand-950">Guest Access Logs</h1>
+                </div>
+                <span class="rounded-2xl bg-violet-50 px-4 py-3 text-sm font-black text-violet-700"><?= count($guestLogs) ?> total entries</span>
+            </div>
+            <div class="custom-scrollbar mt-5 overflow-x-auto">
+                <table class="w-full border-collapse text-left text-sm">
+                    <thead><tr class="bg-blue-50 text-brand-950"><th class="p-4">Nickname</th><th class="p-4">Accessed At</th></tr></thead>
+                    <tbody>
+                    <?php if (!$guestLogs): ?>
+                        <tr><td class="border-b border-slate-100 p-4 text-slate-600" colspan="2">No guest access logs yet.</td></tr>
+                    <?php endif; ?>
+                    <?php foreach ($guestLogs as $log): ?>
+                        <tr class="hover:bg-slate-50">
+                            <td class="border-b border-slate-100 p-4 font-bold"><?= htmlspecialchars($log['nickname'] ?? '') ?></td>
+                            <td class="border-b border-slate-100 p-4"><?= htmlspecialchars($log['accessed_at'] ?? '') ?></td>
                         </tr>
                     <?php endforeach; ?>
                     </tbody>

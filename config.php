@@ -13,6 +13,8 @@ define('ADMIN_PASSWORD', 'feny9959');
 define('ROOT_PATH', __DIR__);
 define('DATA_PATH', ROOT_PATH . DIRECTORY_SEPARATOR . 'data');
 define('USERS_FILE', DATA_PATH . DIRECTORY_SEPARATOR . 'users.json');
+define('SETTINGS_FILE', DATA_PATH . DIRECTORY_SEPARATOR . 'settings.json');
+define('GUEST_LOGS_FILE', DATA_PATH . DIRECTORY_SEPARATOR . 'guest_logs.json');
 
 function app_url(string $path = ''): string
 {
@@ -28,9 +30,15 @@ function ensure_storage(): void
         mkdir(DATA_PATH, 0775, true);
     }
 
-    foreach ([USERS_FILE] as $file) {
+    $defaultFiles = [
+        USERS_FILE => [],
+        SETTINGS_FILE => ['guest_mode' => false],
+        GUEST_LOGS_FILE => [],
+    ];
+
+    foreach ($defaultFiles as $file => $defaultData) {
         if (!file_exists($file)) {
-            file_put_contents($file, json_encode([], JSON_PRETTY_PRINT));
+            file_put_contents($file, json_encode($defaultData, JSON_PRETTY_PRINT));
             chmod($file, 0664);
         }
     }
@@ -61,6 +69,37 @@ function save_users(array $users): void
     write_json_file(USERS_FILE, array_values($users));
 }
 
+function get_settings(): array
+{
+    return array_merge(['guest_mode' => false], read_json_file(SETTINGS_FILE));
+}
+
+function save_settings(array $settings): void
+{
+    write_json_file(SETTINGS_FILE, array_merge(get_settings(), $settings));
+}
+
+function is_guest_mode(): bool
+{
+    return (bool)(get_settings()['guest_mode'] ?? false);
+}
+
+function get_guest_logs(): array
+{
+    return read_json_file(GUEST_LOGS_FILE);
+}
+
+function log_guest_access(string $nickname): void
+{
+    $logs = get_guest_logs();
+    $logs[] = [
+        'id' => bin2hex(random_bytes(8)),
+        'nickname' => $nickname,
+        'accessed_at' => date('c'),
+    ];
+    write_json_file(GUEST_LOGS_FILE, $logs);
+}
+
 function find_user_by_name(string $name): ?array
 {
     $name = strtolower(trim($name));
@@ -87,7 +126,8 @@ function render_top_nav(string $title = '', string $active = '', string $extraHt
 {
     $isAdmin = !empty($_SESSION['admin']);
     $isUser = !empty($_SESSION['user']);
-    $isLoggedIn = $isAdmin || $isUser;
+    $isGuest = !empty($_SESSION['guest']);
+    $isLoggedIn = $isAdmin || $isUser || $isGuest;
     $homeHref = $isLoggedIn ? 'dashboard.php' : 'index.php';
     $brandTitle = $title !== '' ? $title : APP_NAME;
     $links = [
@@ -98,9 +138,12 @@ function render_top_nav(string $title = '', string $active = '', string $extraHt
     if ($isAdmin) {
         $links[] = ['key' => 'admin', 'label' => 'Admin Panel', 'href' => 'admin.php'];
         $links[] = ['key' => 'logout', 'label' => 'Logout', 'href' => 'logout.php'];
-    } elseif ($isUser) {
+    } elseif ($isUser || $isGuest) {
         $links[] = ['key' => 'dashboard', 'label' => 'Dashboard', 'href' => 'dashboard.php'];
         $links[] = ['key' => 'logout', 'label' => 'Logout', 'href' => 'logout.php'];
+    } elseif (is_guest_mode()) {
+        $links[] = ['key' => 'guest', 'label' => 'Guest Access', 'href' => 'login.php?guest=1'];
+        $links[] = ['key' => 'login', 'label' => 'Admin Login', 'href' => 'login.php?admin=1'];
     } else {
         $links[] = ['key' => 'login', 'label' => 'Login', 'href' => 'login.php'];
         $links[] = ['key' => 'register', 'label' => 'Register', 'href' => 'index.php'];
@@ -122,9 +165,18 @@ function render_top_nav(string $title = '', string $active = '', string $extraHt
 
 function require_login(): void
 {
-    if (empty($_SESSION['user']) && empty($_SESSION['admin'])) {
+    if (empty($_SESSION['user']) && empty($_SESSION['admin']) && empty($_SESSION['guest'])) {
         header('Location: login.php');
         exit;
+    }
+
+    if (!empty($_SESSION['guest'])) {
+        if (!is_guest_mode()) {
+            unset($_SESSION['guest']);
+            header('Location: login.php');
+            exit;
+        }
+        return;
     }
 
     if (!empty($_SESSION['user'])) {
@@ -152,6 +204,9 @@ function current_user_name(): string
 {
     if (!empty($_SESSION['admin'])) {
         return 'Administrator';
+    }
+    if (!empty($_SESSION['guest'])) {
+        return $_SESSION['guest']['nickname'] ?? 'Guest';
     }
     return $_SESSION['user']['name'] ?? 'Reviewer';
 }

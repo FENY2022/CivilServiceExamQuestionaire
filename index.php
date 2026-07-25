@@ -3,8 +3,9 @@ require_once __DIR__ . '/config.php';
 
 $message = '';
 $status = 'info';
+$guestMode = is_guest_mode();
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$guestMode) {
     $name = trim($_POST['name'] ?? '');
     $email = strtolower(trim($_POST['email'] ?? ''));
     $age = trim($_POST['age'] ?? '');
@@ -82,6 +83,21 @@ $_SESSION['captcha_answer'] = $captchaA + $captchaB;
             </div>
         </section>
 
+        <?php if ($guestMode): ?>
+        <section class="w-full rounded-[2rem] border border-blue-100 bg-white/95 p-7 shadow-2xl sm:p-9">
+            <p class="text-xs font-extrabold uppercase tracking-[.18em] text-brand-600">Guest Access</p>
+            <h2 class="mt-3 text-3xl font-black text-brand-950">Enter as Guest</h2>
+            <p class="mt-3 text-slate-600">Guest Mode is enabled. Registration is closed for now. Enter a nickname only to access the full reviewer.</p>
+            <form method="post" action="login.php" class="mt-7 grid gap-5">
+                <input type="hidden" name="mode" value="guest">
+                <label class="grid gap-2 font-extrabold text-brand-950">Nickname <input class="rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 font-semibold outline-none transition focus:border-brand-600 focus:ring-4 focus:ring-blue-100" type="text" name="nickname" maxlength="60" required placeholder="Enter your nickname"></label>
+                <button type="submit" class="rounded-2xl bg-gradient-to-r from-brand-950 to-brand-700 px-5 py-4 font-black text-white shadow-xl transition hover:-translate-y-0.5 hover:shadow-blue-300/50">Enter Reviewer</button>
+            </form>
+            <div class="mt-6 text-sm font-black text-brand-700">
+                <a class="hover:text-brand-950" href="login.php?admin=1">Admin Login</a>
+            </div>
+        </section>
+        <?php else: ?>
         <section class="w-full rounded-[2rem] border border-blue-100 bg-white/95 p-7 shadow-2xl sm:p-9">
             <h2 class="text-3xl font-black text-brand-950">Create Reviewer Account</h2>
             <p class="mt-2 text-slate-600">Register your details first. Admin approval is required before you can access the reviewer.</p>
@@ -97,6 +113,7 @@ $_SESSION['captcha_answer'] = $captchaA + $captchaB;
                 <a class="hover:text-brand-950" href="login.php?admin=1">Admin Login</a>
             </div>
         </section>
+        <?php endif; ?>
 
         <section class="w-full rounded-[2rem] border border-blue-100 bg-white/95 p-7 shadow-2xl sm:p-9 lg:col-span-2" id="sampleQuiz">
             <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
