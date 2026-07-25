@@ -200,6 +200,13 @@ class App extends BaseConfig
      */
     public bool $CSPEnabled = false;
     public string $appName = 'Philippines Civil Service Exam Reviewer';
-    public string $adminUsername = 'feny';
-    public string $adminPassword = 'feny9959';
+    public string $adminUsername = '';
+    public string $adminPassword = '';
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->adminUsername = $_ENV['ADMIN_USERNAME'] ?? $this->adminUsername;
+        $this->adminPassword = $_ENV['ADMIN_PASSWORD'] ?? $this->adminPassword;
+    }
 }
