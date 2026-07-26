@@ -13,10 +13,12 @@
     const modalRoot = document.getElementById('modalRoot');
     const answers = new Map();
     const sectionResults = new Map();
+    const descriptiveCategory = buildDescriptiveCategory();
+    const categories = descriptiveCategory ? [descriptiveCategory, ...exam.categories] : exam.categories;
     const totalQuestions = exam.categories.reduce((sum, category) => sum + category.questions.length, 0);
     const timerEnabled = exam.timerEnabled !== false;
     const storageKey = `civilServiceReviewer:${exam.type}:progress:v2`;
-    let activeCategoryKey = exam.categories[0]?.key || '';
+    let activeCategoryKey = categories[0]?.key || '';
     let remaining = exam.timeLimitMinutes * 60;
     let submitted = false;
 
@@ -26,13 +28,14 @@
     const incorrectClasses = ['border-red-300', 'bg-red-50', 'text-red-900'];
 
     function renderNavigation() {
-        categoryNav.innerHTML = exam.categories.map((category, index) => {
+        categoryNav.innerHTML = categories.map((category, index) => {
             const result = sectionResults.get(category.key);
             const answered = category.questions.filter(question => answers.has(question.id)).length;
             const status = result ? `${result.score}/${result.total}` : `${answered}/${category.questions.length}`;
+            const statusLabel = result ? 'Scored' : 'Answered';
             return `<button type="button" data-target="${category.key}" class="${navBase} ${category.key === activeCategoryKey ? navActive : ''}">
                 <span class="block">${index + 1}. ${escapeHtml(category.title)}</span>
-                <span class="mt-1 block text-xs font-extrabold ${result ? 'text-emerald-700' : 'text-slate-400'}">${result ? 'Scored' : 'Answered'}: ${status}</span>
+                <span class="mt-1 block text-xs font-extrabold ${result ? 'text-emerald-700' : 'text-slate-400'}">${statusLabel}: ${status}</span>
             </button>`;
         }).join('');
 
@@ -55,7 +58,8 @@
     }
 
     function renderQuiz() {
-        quizArea.innerHTML = exam.categories.map(category => {
+        quizArea.innerHTML = categories.map(category => {
+            const scored = isScoredCategory(category);
             const questions = category.questions.map((question, index) => {
                 const choices = question.choices.map((choice, choiceIndex) => `
                     <label class="choice my-2 flex cursor-pointer gap-3 rounded-2xl border border-slate-200 bg-white p-3 text-slate-700 transition hover:border-blue-200 hover:bg-blue-50" data-question="${question.id}" data-choice="${choiceIndex}">
@@ -67,8 +71,9 @@
                 return `
                     <article class="question-card mb-4 rounded-3xl border border-blue-100 bg-white p-6 shadow-lg" data-question-id="${question.id}" data-answer="${question.answer}" data-number="${index + 1}">
                         <h3 class="text-lg font-black leading-7 text-brand-950">${index + 1}. ${escapeHtml(question.question)}</h3>
+                        ${question.note ? `<p class="mt-2 text-sm font-bold text-slate-500">${escapeHtml(question.note)}</p>` : ''}
                         <div class="choices mt-4">${choices}</div>
-                        <p class="explanation hidden mt-4 rounded-2xl bg-slate-50 p-4 text-sm font-semibold leading-6 text-slate-600"><strong class="text-brand-950">Explanation:</strong> ${escapeHtml(question.explanation)}</p>
+                        ${scored ? `<p class="explanation hidden mt-4 rounded-2xl bg-slate-50 p-4 text-sm font-semibold leading-6 text-slate-600"><strong class="text-brand-950">Explanation:</strong> ${escapeHtml(question.explanation)}</p>` : ''}
                     </article>
                 `;
             }).join('');
@@ -78,11 +83,11 @@
                     <div class="mb-5 rounded-3xl border border-blue-100 bg-white p-6 shadow-xl">
                         <p class="text-xs font-extrabold uppercase tracking-[.18em] text-brand-600">${escapeHtml(category.group.replaceAll('_', ' '))}</p>
                         <h2 class="mt-2 text-3xl font-black text-brand-950">${escapeHtml(category.title)}</h2>
-                        <p class="mt-2 font-semibold text-slate-600">Answer all questions in this section, then submit this section to get your score immediately.</p>
+                        <p class="mt-2 font-semibold text-slate-600">${scored ? 'Answer all questions in this section, then submit this section to get your score immediately.' : escapeHtml(exam.descriptiveInstructions || 'Supply the information as honestly and accurately as possible. This section is not scored.')}</p>
                     </div>
                     ${questions}
-                    <div class="section-result mb-5 hidden rounded-3xl border border-emerald-200 bg-emerald-50 p-6 shadow-lg" data-result="${category.key}"></div>
-                    <button type="button" class="section-submit mb-8 rounded-2xl bg-gradient-to-r from-brand-950 to-brand-700 px-6 py-4 font-black text-white shadow-xl transition hover:-translate-y-0.5" data-category="${category.key}">Submit ${escapeHtml(category.title)}</button>
+                    ${scored ? `<div class="section-result mb-5 hidden rounded-3xl border border-emerald-200 bg-emerald-50 p-6 shadow-lg" data-result="${category.key}"></div>
+                    <button type="button" class="section-submit mb-8 rounded-2xl bg-gradient-to-r from-brand-950 to-brand-700 px-6 py-4 font-black text-white shadow-xl transition hover:-translate-y-0.5" data-category="${category.key}">Submit ${escapeHtml(category.title)}</button>` : ''}
                 </section>
             `;
         }).join('');
@@ -107,7 +112,10 @@
         if (!activeCategory) return;
         const answered = activeCategory.questions.filter(question => answers.has(question.id)).length;
         const total = activeCategory.questions.length;
-        const overallAnswered = answers.size;
+        const overallAnswered = exam.categories.reduce(
+            (sum, category) => sum + category.questions.filter(question => answers.has(question.id)).length,
+            0
+        );
         const overallUnanswered = totalQuestions - overallAnswered;
         progressText.textContent = `${answered} of ${total} answered in ${activeCategory.title}`;
         progressBar.style.width = `${total === 0 ? 0 : (answered / total) * 100}%`;
@@ -392,12 +400,27 @@
     }
 
     function getCategory(categoryKey) {
-        return exam.categories.find(category => category.key === categoryKey);
+        return categories.find(category => category.key === categoryKey);
     }
 
     function getNextCategory(categoryKey) {
-        const index = exam.categories.findIndex(category => category.key === categoryKey);
-        return index >= 0 ? exam.categories[index + 1] : null;
+        const index = categories.findIndex(category => category.key === categoryKey);
+        return index >= 0 ? categories[index + 1] : null;
+    }
+
+    function isScoredCategory(category) {
+        return category.scored !== false;
+    }
+
+    function buildDescriptiveCategory() {
+        if (!Array.isArray(exam.descriptiveQuestionnaire) || exam.descriptiveQuestionnaire.length === 0) return null;
+        return {
+            key: 'descriptive_questionnaire',
+            title: 'Descriptive Questionnaire',
+            group: 'examinee_profile',
+            scored: false,
+            questions: exam.descriptiveQuestionnaire,
+        };
     }
 
     function saveProgress() {
