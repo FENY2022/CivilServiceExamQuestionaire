@@ -3219,7 +3219,7 @@ function complete_question_categories(): array
                     'answer' => 1,
                     'explanation' => 'Correct answer based on the answer key in index(4).pdf.',
                 ],
-                [
+                  [
                     'id' => 'pdf_210',
                     'sourceNumber' => 210,
                     'question' => 'A car travels 120 miles at a speed of 40 miles per hour and makes a return trip at a speed of 60 miles per hour. What is its average speed, in miles per hour, of the police car?',
