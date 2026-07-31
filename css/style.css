@@ -43,3 +43,54 @@
 html {
     scroll-behavior: smooth;
 }
+
+#textSizeRange {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 8px;
+    border-radius: 999px;
+    background: linear-gradient(to right, #1479c9 var(--fill, 50%), #e2e8f0 var(--fill, 50%));
+    outline: none;
+}
+
+#textSizeRange:focus-visible {
+    box-shadow: 0 0 0 4px rgba(20, 121, 201, .25);
+}
+
+#textSizeRange::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 999px;
+    background: #0f5ea8;
+    border: 3px solid #ffffff;
+    box-shadow: 0 2px 6px rgba(15, 94, 168, .35);
+    transition: transform .15s ease;
+    cursor: pointer;
+}
+
+#textSizeRange::-webkit-slider-thumb:hover {
+    transform: scale(1.12);
+}
+
+#textSizeRange::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 999px;
+    background: #0f5ea8;
+    border: 3px solid #ffffff;
+    box-shadow: 0 2px 6px rgba(15, 94, 168, .35);
+    transition: transform .15s ease;
+    cursor: pointer;
+}
+
+#textSizeRange::-moz-range-thumb:hover {
+    transform: scale(1.12);
+}
+
+#textSizeRange::-moz-range-track {
+    height: 8px;
+    border-radius: 999px;
+    background: #e2e8f0;
+}

@@ -563,7 +563,7 @@
     window.addEventListener('resize', updateActionBarVisibility);
 
     setupActionBar();
-    submitButton.innerHTML = '<span>Overall Summary</span><span class="ml-1 rounded-full bg-white/20 px-2 py-0.5 text-[11px] sm:ml-2 sm:py-1 sm:text-xs" id="submitBadge">0 sections scored</span>';
+    submitButton.innerHTML = '<span>Overall Summary</span><span class="ml-1 rounded-full bg-white/20 px-2 py-0.5 text-[0.6875rem] sm:ml-2 sm:py-1 sm:text-xs" id="submitBadge">0 sections scored</span>';
     submitButton.addEventListener('click', showSubmitModal);
 
     restoreProgress();
